@@ -8,10 +8,8 @@ import com.remitly.main.RemitlyInternship.Service.SwiftCodeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.Response;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -42,6 +40,13 @@ public class SwiftCodeController {
         log.info("POST request received for SWIFT CODE: {}", requestDTO.getSwiftCode());
         MessageResponseDTO messageResponseDTO = swiftCodeService.createSwiftCode(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(messageResponseDTO);
+    }
+
+    @DeleteMapping("/{swiftCode}")
+    public ResponseEntity<MessageResponseDTO> deleteSwiftCode(@PathVariable("swiftCode") String swiftCode) {
+        log.info("DELETE request received for SWIFT CODE: {}", swiftCode);
+        MessageResponseDTO messageResponseDTO = swiftCodeService.deleteSwiftCode(swiftCode);
+        return ResponseEntity.ok(messageResponseDTO);
     }
 
 

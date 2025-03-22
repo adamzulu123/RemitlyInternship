@@ -110,13 +110,42 @@ public class SwiftCodeService {
     }
 
 
+    //deleting existing SwiftCodes
+    @Transactional
+    public MessageResponseDTO deleteSwiftCode(String swiftCode) {
+        log.info("Deleting swift code for " + swiftCode);
 
+        SwiftCode swiftCodeEntity = swiftCodeRepository.findBySwiftCode(swiftCode)
+                .orElseThrow(() -> new SwiftCodeNotFoundException("SWIFT code not found: " + swiftCode));
 
+        //if it's a branch then we are removing it from the headquarter list and deleting branch itself
+        if (!swiftCodeEntity.isHeadquarter()) {
+            if (swiftCodeEntity.getHeadquarters() != null) {
+                swiftCodeEntity.getHeadquarters().getBranches().remove(swiftCodeEntity);
+            }
+        }
 
+        //IT'S NOT SPECIFIED WHAT SHOULD WE DO IN CASE IF WE ARE DELETING HEADQUARTER!!!!!!!!
+        //I choose to delete all branches with: cascade = CascadeType.ALL in SwiftCode class.
 
+        /*
+        //1) if it's a headquarter we have to delete it and all its branches
+        //2) deleting headquarter and all branches stays
+        if (swiftCodeEntity.isHeadquarter() && !swiftCodeEntity.getBranches().isEmpty()) {
+            swiftCodeEntity.getBranches().forEach(branch ->{
+                branch.setHeadquarter(false);
+                swiftCodeRepository.delete(branch);
+            });
+        }
+         */
 
+        swiftCodeRepository.delete(swiftCodeEntity);
+        log.info("Successfully deleted SWIFT code: {}", swiftCode);
 
-
+        return MessageResponseDTO.builder()
+                .message("Successfully deleted SWIFT code: " + swiftCode)
+                .build();
+    }
 
 
     //mapping SwiftCode model (entity) to a DTO - used by both getSwiftCode and getCountrySwiftCodes
@@ -143,7 +172,7 @@ public class SwiftCodeService {
             return List.of();
         }
 
-        //we are using matBranchesToDTO for every object in the stream
+        //we are using mapBranchToDTO for every object in the stream
         return swiftCode.getBranches().stream()
                 .map(this::mapBranchToDTO)
                 .collect(Collectors.toList()); //and then collect every object to the list
