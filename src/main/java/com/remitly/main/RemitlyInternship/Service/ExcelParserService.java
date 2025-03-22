@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -40,81 +41,18 @@ Important info about formatting: Country codes and names must always be stored a
 public class ExcelParserService {
 
     private final SwiftCodeRepository swiftCodeRepository;
+    private final SwiftCodeParseService swiftCodeParseService;
 
-    @PostConstruct
+    //@PostConstruct
     public void init(){
         try{
             File file = new ClassPathResource("data/Interns_2025_SWIFT_CODES.xlsx").getFile();
-            parseExcelFile(new FileInputStream(file));
+            swiftCodeParseService.parseExcelFile(new FileInputStream(file));
             log.info("Successfully parsed excel file");
 
         }catch(Exception e){
-            log.error("Error while parsing excel file", e.getMessage());
+            log.error("Error while parsing excel file", e);
         }
     }
-
-    private void parseExcelFile(InputStream inputStream) throws IOException {
-        try (Workbook workbook = new XSSFWorkbook(inputStream)) {
-
-            Sheet sheet = workbook.getSheetAt(0); //downloading first sheet
-
-            //cache for heaquarters, it's important to save headquarters first
-            Map<String, SwiftCode> headquartersMap = new HashMap<>();
-            List<SwiftCode> swiftCodesToSave = new ArrayList<>();
-
-            //iterating through rows cuz every row is a new record which has to be added to the database
-            for (Row row : sheet) {
-
-                //skipping header row
-                if(row.getRowNum() == 0){
-                    continue;
-                }
-
-                String countryISO2 = row.getCell(0).getStringCellValue().toUpperCase();
-                String swiftCode = row.getCell(1).getStringCellValue();
-                boolean isHeadquarter = swiftCode.endsWith("XXX");
-                String bankName = row.getCell(3).getStringCellValue().toUpperCase();
-                String address = row.getCell(4).getStringCellValue();
-                String countryName = row.getCell(6).getStringCellValue().toUpperCase();
-
-                SwiftCode swift = SwiftCode.builder()
-                        .swiftCode(swiftCode)
-                        .bankName(bankName)
-                        .address(address)
-                        .countryISO2(countryISO2)
-                        .countryName(countryName)
-                        .isHeadquarter(isHeadquarter)
-                        .headquarters(null)
-                        .build();
-
-                swiftCodesToSave.add(swift);
-
-                if (isHeadquarter) {
-                    headquartersMap.put(swiftCode, swift);
-                }
-            }
-
-            //Save headquarters first, then branches to ensure proper references
-            List<SwiftCode> headquartersToSave = swiftCodesToSave.stream()
-                    .filter(SwiftCode::isHeadquarter)
-                    .collect(Collectors.toList());
-            swiftCodeRepository.saveAll(headquartersToSave);
-            log.info("Successfully saved {} headquarters", headquartersToSave.size());
-
-            List<SwiftCode> branchesToSave = swiftCodesToSave.stream()
-                    .filter(code -> !code.isHeadquarter())
-                    .collect(Collectors.toList());
-            swiftCodeRepository.saveAll(branchesToSave);
-            log.info("Successfully saved {} branches", branchesToSave.size());
-
-            log.info("Successfully parsed and saved {} total SWIFT codes", swiftCodesToSave.size());
-
-        }catch(Exception e){
-            throw new RuntimeException("Error parsing Excel file" + e.getMessage());
-        }
-
-
-    }
-
 
 }

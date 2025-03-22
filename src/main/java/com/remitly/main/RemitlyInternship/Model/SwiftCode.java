@@ -10,7 +10,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "swift_codes")
+//indexes are created on the 'swiftCode' and 'countryISO2'
+//columns to optimize search queries and improve query performance for filtering by these fields.
+@Table(name = "swift_codes", indexes = {
+    @Index(name="idx_swift_code", columnList = "swiftCode", unique = true),
+    @Index(name="idx_country_iso2", columnList = "countryISO2")
+})
 @Data
 @Builder
 @NoArgsConstructor
