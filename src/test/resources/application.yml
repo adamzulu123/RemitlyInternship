@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: RemitlyInternshipTest
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/testdatabase
+    username: testuser
+    password: testpassword
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database: postgresql
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    open-in-view: false
+
+  profiles:
+    active: test
