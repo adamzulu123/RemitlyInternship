@@ -1,29 +1,16 @@
 package com.remitly.main.RemitlyInternship.Service;
 
-import com.remitly.main.RemitlyInternship.Model.SwiftCode;
 import com.remitly.main.RemitlyInternship.Repository.SwiftCodeRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 
 /**
 Important info about formatting: Country codes and names must always be stored and returned as uppercase strings.
@@ -43,11 +30,11 @@ public class ExcelParserService {
     private final SwiftCodeRepository swiftCodeRepository;
     private final SwiftCodeParseService swiftCodeParseService;
 
-    //@PostConstruct
+    //@PostConstruct - this annotation allow us tu start this method everytime when we start out app
     public void init(){
         try{
-            File file = new ClassPathResource("data/Interns_2025_SWIFT_CODES.xlsx").getFile();
-            swiftCodeParseService.parseExcelFile(new FileInputStream(file));
+            InputStream inputStream = new ClassPathResource("data/Interns_2025_SWIFT_CODES.xlsx").getInputStream();
+            swiftCodeParseService.parseExcelFile(inputStream);
             log.info("Successfully parsed excel file");
 
         }catch(Exception e){
