@@ -1,5 +1,5 @@
 #1. Build app
-FROM eclipse-temurin:21-jdk as build
+FROM eclipse-temurin:21-jdk AS build
 
 WORKDIR /workspace/app
 
@@ -16,7 +16,7 @@ RUN ./mvnw package -DskipTests
 RUN mkdir -p target/dependency && (cd target/dependency; jar -xf ../*.jar)
 
 #Test app
-FROM eclipse-temurin:21-jdk as test
+FROM eclipse-temurin:21-jdk AS test
 #copying application from the previos stage
 COPY --from=build /workspace/app /workspace/app
 WORKDIR /workspace/app
