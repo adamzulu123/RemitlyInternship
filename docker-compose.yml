@@ -46,6 +46,37 @@ services:
       - postgres
     restart: unless-stopped
 
+  app:
+    build: .
+    container_name: remitly_app
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/mydatabase
+      SPRING_DATASOURCE_USERNAME: myuser
+      SPRING_DATASOURCE_PASSWORD: mypassword
+    ports:
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: test
+    container_name: remitly_test
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-test:5432/testdatabase
+      SPRING_DATASOURCE_USERNAME: testuser
+      SPRING_DATASOURCE_PASSWORD: testpassword
+      SPRING_PROFILES_ACTIVE: test
+    networks:
+      - backend
+    depends_on:
+      - postgres-test
+
 volumes:
   pgdata:
   pgdata-test:

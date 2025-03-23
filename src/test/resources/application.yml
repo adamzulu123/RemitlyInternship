@@ -3,7 +3,7 @@ spring:
     name: RemitlyInternshipTest
 
   datasource:
-    url: jdbc:postgresql://localhost:5433/testdatabase
+    url: jdbc:postgresql://postgres-test:5433/testdatabase
     username: testuser
     password: testpassword
     driver-class-name: org.postgresql.Driver
