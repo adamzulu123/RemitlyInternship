@@ -251,7 +251,8 @@ public class SwiftCodeParseService {
 
     //in our case excel file is good and this validation is not needed but in real life not always it's that awesome
     private boolean isValid(SwiftCode swiftCode){
-        if (swiftCode.getSwiftCode() == null || swiftCode.getSwiftCode().length() != 11) {
+        String swiftCodeValue = swiftCode.getSwiftCode();
+        if (swiftCode.getSwiftCode() == null || swiftCodeValue.length() != 11) {
             log.warn("Invalid SWIFT code length for {}", swiftCode.getSwiftCode());
             return false;
         }

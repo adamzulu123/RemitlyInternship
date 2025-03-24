@@ -46,10 +46,13 @@ Ensure your Excel file follows the format:
   * COUNTRY NAME
 * Columns can appear in any order.
 * SWIFT CODE must be exactly 11 characters long (codes ending in "XXX" indicate headquarters).
+  * This is what I understand from the Task Description, that branches are 8 + 3 (random), when headquarter is 8 + 3 (XXX).
+  * I understand that SwiftCodes can be just 8 Characters, but the description says: "Codes ending with “XXX” represent a bank's headquarters", so for me, it implicates the fact that headquarter is always 11 characters, because only headquarters can have 8 characters in real-life (from my knowledge). 
+  * **I'm sorry if I understand something incorrectly!**
 * COUNTRY ISO2 CODE must be exactly 2 characters long.
 
 ### Important!! 
-* SwiftCode model is representing a BANK
+* SwiftCode model represents a BANK. 
 
 
 ## Prerequisites

@@ -73,4 +73,14 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new MessageResponseDTO("Error parsing Excel file: " + ex.getMessage()));
     }
+
+    @ExceptionHandler(InvalidSwiftCodeException.class)
+    public ResponseEntity<MessageResponseDTO> handleInvalidSwiftCodeException(InvalidSwiftCodeException ex) {
+        log.warn("Invalid SWIFT code: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new MessageResponseDTO(ex.getMessage()));
+    }
+
+
 }

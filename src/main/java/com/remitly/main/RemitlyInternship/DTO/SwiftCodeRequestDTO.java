@@ -33,5 +33,8 @@ public class SwiftCodeRequestDTO {
     @Pattern(regexp = "^[A-Z]{6}[A-Z0-9]{2}[A-Z0-9]{3}$", message = "SWIFT code format is invalid")
     private String swiftCode;
 
+    //@Size(min = 8, max = 11, message = "SWIFT code must be 8 or 11 characters")
+    //@Pattern(regexp = "^[A-Z]{6}[A-Z0-9]{2}[A-Z0-9]{0,3}$", message = "SWIFT code format is invalid")
+    //private String swiftCode;
 
 }
