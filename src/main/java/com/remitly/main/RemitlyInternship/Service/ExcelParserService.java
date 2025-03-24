@@ -30,7 +30,7 @@ public class ExcelParserService {
     private final SwiftCodeRepository swiftCodeRepository;
     private final SwiftCodeParseService swiftCodeParseService;
 
-    //@PostConstruct - this annotation allow us tu start this method everytime when we start out app
+    @PostConstruct //this annotation allow us tu start this method everytime when we start out app
     public void init(){
         try{
             InputStream inputStream = new ClassPathResource("data/Interns_2025_SWIFT_CODES.xlsx").getInputStream();

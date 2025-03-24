@@ -57,6 +57,9 @@ public class SwiftCodeParseService {
             Map<String, SwiftCode> headquartersMap = new HashMap<>();
             List<SwiftCode> swiftCodesToSave = new ArrayList<>();
 
+            //Add a set to track unique swift codes to prevent duplicates in the same Excel file
+            Set<String> uniqueSwiftCodes = new HashSet<>();
+
             //iterating through rows cuz every row is a new record which has to be added to the database
             for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
                 Row row = sheet.getRow(i);
@@ -86,6 +89,13 @@ public class SwiftCodeParseService {
                         continue;
                     }
 
+                    //Skip if this swift code was already processed in this file
+                    if (!uniqueSwiftCodes.add(swiftCode)) {
+                        log.warn("Duplicate SWIFT code found in file: {}, skipping", swiftCode);
+                        continue;
+                    }
+
+                    //this should also ensure that no same swiftcodes are saved to the database (more important)
                     Optional<SwiftCode> existingSwiftCode = swiftCodeRepository.findBySwiftCode(swiftCode);
                     if (existingSwiftCode.isPresent()) {
                         log.warn("This swift code already exists in DB: {}", swiftCode);
