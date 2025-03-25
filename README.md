@@ -105,6 +105,9 @@ application.yml file:
 ### Stop all services: 
 * docker-compose down -v
 
+### Start app and test (Not recommended): 
+* docker-compose up --build -d
+
 
 ## Services 
 
