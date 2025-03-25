@@ -1,6 +1,7 @@
 package com.remitly.main.RemitlyInternship.Service;
 
 import com.remitly.main.RemitlyInternship.DTO.*;
+import com.remitly.main.RemitlyInternship.Exception.InvalidSwiftCodeException;
 import com.remitly.main.RemitlyInternship.Exception.SwiftCodeExistsException;
 import com.remitly.main.RemitlyInternship.Exception.SwiftCodeNotFoundException;
 import com.remitly.main.RemitlyInternship.Model.SwiftCode;
@@ -88,6 +89,10 @@ public class SwiftCodeService {
 
         //now if it's a branch we have to find its headquarter
         if(!isHeadquarter) {
+            //XXX at the end from the description is always headquarter
+            if (swiftCode.endsWith("XXX")) {
+                throw new InvalidSwiftCodeException("Branch SwiftCode can't end with XXX: " + swiftCode);
+            }
             String potentialHeadquarterSwiftCode = swiftCode.substring(0, 8) + "XXX";
             Optional<SwiftCode> headquarter = swiftCodeRepository.findBySwiftCode(potentialHeadquarterSwiftCode);
             //log.info("Found headquarter: {}", headquarter.isPresent());
@@ -99,6 +104,18 @@ public class SwiftCodeService {
                 h.getBranches().add(swiftCodeEntity);
                 //swiftCodeRepository.save(h);
             });
+        } else {
+            //If user adds branch first which I guess might be possible
+            List<SwiftCode> orphanBranches = swiftCodeRepository.findByHeadquarters(null).stream()
+                    .filter(branch -> branch.getSwiftCode().startsWith(swiftCode.substring(0, 8)))
+                    .toList();
+
+            orphanBranches.forEach(branch -> {
+                branch.setHeadquarters(swiftCodeEntity);
+                swiftCodeEntity.getBranches().add(branch);
+            });
+
+            swiftCodeRepository.saveAll(orphanBranches);
         }
 
         swiftCodeRepository.save(swiftCodeEntity);

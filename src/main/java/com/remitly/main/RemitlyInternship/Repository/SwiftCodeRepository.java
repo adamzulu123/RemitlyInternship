@@ -12,4 +12,7 @@ public interface SwiftCodeRepository extends JpaRepository<SwiftCode, Long> {
     //method to find branches based on the bank's headquarter.
     List<SwiftCode> findByHeadquarters(SwiftCode headquarters);
     boolean existsBySwiftCode(String swiftCode);
+
+    //List<SwiftCode> findBySwiftCodeStartingWithAndIsHeadquarterFalse(String headquarterPrefix);
+
 }
